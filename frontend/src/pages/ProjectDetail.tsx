@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../graphql/queries';
 import TaskBoard from '../components/TaskBoard';
 import Button from '../components/common/Button';
+import Modal from '../components/common/Modal';
+import ProjectForm from '../components/ProjectForm';
 import NotFound from './NotFound';
 import { isNotFoundError } from '../utils/errorUtils';
 
 const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { data, loading, error, refetch } = useQuery(GET_PROJECT, {
     variables: { id: projectId },
@@ -91,14 +95,22 @@ const ProjectDetail = () => {
                 )}
               </div>
             </div>
-            <div className="flex-shrink-0 bg-gray-50 rounded-lg p-4 lg:text-right">
-              <div className="text-sm text-gray-600 mb-1">Progress</div>
-              <div className="text-2xl font-bold text-gray-900">
-                {project.completedTasks || 0} / {project.taskCount || 0}
+            <div className="flex flex-col gap-4 flex-shrink-0">
+              <div className="bg-gray-50 rounded-lg p-4 lg:text-right">
+                <div className="text-sm text-gray-600 mb-1">Progress</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {project.completedTasks || 0} / {project.taskCount || 0}
+                </div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {project.completionRate?.toFixed(0) || 0}% Complete
+                </div>
               </div>
-              <div className="text-sm text-gray-600 mt-1">
-                {project.completionRate?.toFixed(0) || 0}% Complete
-              </div>
+              <Button
+                onClick={() => setIsEditModalOpen(true)}
+                className="btn-secondary w-full whitespace-nowrap"
+              >
+                Edit Project
+              </Button>
             </div>
           </div>
         </div>
@@ -111,6 +123,23 @@ const ProjectDetail = () => {
           onRefetch={refetch}
         />
       </main>
+
+      {/* Edit Project Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit Project"
+      >
+        <ProjectForm
+          organizationSlug={project.organization.slug}
+          project={project}
+          onSuccess={() => {
+            setIsEditModalOpen(false);
+            refetch();
+          }}
+          onCancel={() => setIsEditModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 };

@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
-import { CREATE_PROJECT } from '../graphql/mutations';
+import { CREATE_PROJECT, UPDATE_PROJECT } from '../graphql/mutations';
 import Button from './common/Button';
+import { Project } from '../types';
 
 interface ProjectFormProps {
   organizationSlug: string;
   onSuccess: () => void;
   onCancel: () => void;
+  project?: Project | null; // Optional project for edit mode
 }
 
-const ProjectForm = ({ organizationSlug, onSuccess, onCancel }: ProjectFormProps) => {
+const ProjectForm = ({ organizationSlug, onSuccess, onCancel, project }: ProjectFormProps) => {
+  const isEditMode = !!project;
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -17,22 +21,48 @@ const ProjectForm = ({ organizationSlug, onSuccess, onCancel }: ProjectFormProps
     dueDate: '',
   });
 
-  const [createProject, { loading, error }] = useMutation(CREATE_PROJECT);
+  // Initialize form with project data in edit mode
+  useEffect(() => {
+    if (project) {
+      setFormData({
+        name: project.name,
+        description: project.description || '',
+        status: project.status,
+        dueDate: project.dueDate || '',
+      });
+    }
+  }, [project]);
+
+  const [createProject, { loading: createLoading, error: createError }] = useMutation(CREATE_PROJECT);
+  const [updateProject, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_PROJECT);
+
+  const loading = createLoading || updateLoading;
+  const error = createError || updateError;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      await createProject({
-        variables: {
-          organizationSlug,
-          ...formData,
-          dueDate: formData.dueDate || undefined,
-        },
-      });
+      if (isEditMode) {
+        await updateProject({
+          variables: {
+            projectId: project.id,
+            ...formData,
+            dueDate: formData.dueDate || undefined,
+          },
+        });
+      } else {
+        await createProject({
+          variables: {
+            organizationSlug,
+            ...formData,
+            dueDate: formData.dueDate || undefined,
+          },
+        });
+      }
       onSuccess();
     } catch (err) {
-      console.error('Error creating project:', err);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} project:`, err);
     }
   };
 
@@ -104,7 +134,13 @@ const ProjectForm = ({ organizationSlug, onSuccess, onCancel }: ProjectFormProps
 
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <Button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
-          {loading ? 'Creating...' : 'Create Project'}
+          {loading
+            ? isEditMode
+              ? 'Updating...'
+              : 'Creating...'
+            : isEditMode
+            ? 'Update Project'
+            : 'Create Project'}
         </Button>
         <Button type="button" onClick={onCancel} className="btn-secondary w-full sm:w-auto">
           Cancel
