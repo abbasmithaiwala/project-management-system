@@ -35,13 +35,13 @@ const client = new ApolloClient({
         fields: {
           projects: {
             // Merge strategy for projects list
-            merge(existing = [], incoming) {
+            merge(_existing = [], incoming) {
               return incoming;
             },
           },
           tasks: {
             // Merge strategy for tasks list
-            merge(existing = [], incoming) {
+            merge(_existing = [], incoming) {
               return incoming;
             },
           },
@@ -50,7 +50,7 @@ const client = new ApolloClient({
       Project: {
         fields: {
           tasks: {
-            merge(existing = [], incoming) {
+            merge(_existing = [], incoming) {
               return incoming;
             },
           },
@@ -59,7 +59,7 @@ const client = new ApolloClient({
       Task: {
         fields: {
           comments: {
-            merge(existing = [], incoming) {
+            merge(_existing = [], incoming) {
               return incoming;
             },
           },

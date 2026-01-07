@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/client';
 import { GET_PROJECTS } from '../graphql/queries';
 import ProjectList from '../components/ProjectList';
 import ProjectForm from '../components/ProjectForm';
-import { Project } from '../types';
 
 const Dashboard = () => {
   const { organizationSlug } = useParams<{ organizationSlug: string }>();
