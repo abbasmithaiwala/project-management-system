@@ -51,6 +51,7 @@ class ProjectType(DjangoObjectType):
 class TaskType(DjangoObjectType):
     """GraphQL type for Task model with computed fields."""
     is_overdue = graphene.Boolean()
+    comment_count = graphene.Int()
 
     class Meta:
         model = Task
@@ -62,6 +63,10 @@ class TaskType(DjangoObjectType):
     def resolve_is_overdue(self, info):
         """Check if task is past its due date."""
         return self.is_overdue
+
+    def resolve_comment_count(self, info):
+        """Total number of comments on this task."""
+        return self.comments.count()
 
 
 class TaskCommentType(DjangoObjectType):

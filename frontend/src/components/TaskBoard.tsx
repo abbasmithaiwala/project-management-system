@@ -41,18 +41,49 @@ const DraggableTaskCard = ({ task, onStatusChange, onClick }: DraggableTaskCardP
       }
     : undefined;
 
+  // Status-based styling
+  const statusStyles = {
+    TODO: 'bg-gray-50 border-l-4 border-l-gray-400',
+    IN_PROGRESS: 'bg-orange-50 border-l-4 border-l-orange-500',
+    DONE: 'bg-green-50 border-l-4 border-l-green-500',
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-white rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${
-        isDragging ? 'opacity-50' : ''
-      }`}
+      className={`rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${
+        statusStyles[task.status]
+      } ${isDragging ? 'opacity-50' : ''}`}
     >
       <div onClick={onClick} className="cursor-pointer">
-        <h4 className="font-medium text-gray-900 text-sm md:text-base break-words">{task.title}</h4>
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h4 className="font-medium text-gray-900 text-sm md:text-base break-words flex-1">
+            {task.title}
+          </h4>
+          {/* Comment count badge */}
+          {task.commentCount !== undefined && task.commentCount > 0 && (
+            <div className="flex items-center gap-1 text-gray-600 flex-shrink-0">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                />
+              </svg>
+              <span className="text-xs font-medium">{task.commentCount}</span>
+            </div>
+          )}
+        </div>
         {task.description && (
           <p className="text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">{task.description}</p>
         )}
@@ -285,8 +316,39 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
         {/* Drag Overlay - shows the task being dragged */}
         <DragOverlay>
           {activeTask ? (
-            <div className="bg-white rounded-lg p-3 md:p-4 shadow-lg cursor-grabbing opacity-90">
-              <h4 className="font-medium text-gray-900 text-sm md:text-base break-words">{activeTask.title}</h4>
+            <div
+              className={`rounded-lg p-3 md:p-4 shadow-lg cursor-grabbing opacity-90 ${
+                activeTask.status === 'TODO'
+                  ? 'bg-gray-50 border-l-4 border-l-gray-400'
+                  : activeTask.status === 'IN_PROGRESS'
+                  ? 'bg-orange-50 border-l-4 border-l-orange-500'
+                  : 'bg-green-50 border-l-4 border-l-green-500'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h4 className="font-medium text-gray-900 text-sm md:text-base break-words flex-1">
+                  {activeTask.title}
+                </h4>
+                {activeTask.commentCount !== undefined && activeTask.commentCount > 0 && (
+                  <div className="flex items-center gap-1 text-gray-600 flex-shrink-0">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                      />
+                    </svg>
+                    <span className="text-xs font-medium">{activeTask.commentCount}</span>
+                  </div>
+                )}
+              </div>
               {activeTask.description && (
                 <p className="text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">{activeTask.description}</p>
               )}

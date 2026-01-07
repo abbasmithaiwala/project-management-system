@@ -36,6 +36,7 @@ export interface Task {
   assigneeEmail: string;
   dueDate?: string;
   isOverdue?: boolean;
+  commentCount?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -71,6 +71,7 @@ export const GET_PROJECT = gql`
         assigneeEmail
         dueDate
         isOverdue
+        commentCount
         createdAt
       }
     }
