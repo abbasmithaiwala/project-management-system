@@ -4,6 +4,8 @@ import { useQuery } from '@apollo/client';
 import { GET_PROJECTS } from '../graphql/queries';
 import ProjectList from '../components/ProjectList';
 import ProjectForm from '../components/ProjectForm';
+import NotFound from './NotFound';
+import { isNotFoundError } from '../utils/errorUtils';
 
 const Dashboard = () => {
   const { organizationSlug } = useParams<{ organizationSlug: string }>();
@@ -19,6 +21,17 @@ const Dashboard = () => {
 
   if (!organizationSlug) {
     return <div className="p-8">No organization selected</div>;
+  }
+
+  // Check if organization was not found
+  if (error && isNotFoundError(error)) {
+    return (
+      <NotFound
+        title="Organization Not Found"
+        message={`The organization "${organizationSlug}" does not exist. It may have been deleted or you may not have access to it.`}
+        backPath="/"
+      />
+    );
   }
 
   return (

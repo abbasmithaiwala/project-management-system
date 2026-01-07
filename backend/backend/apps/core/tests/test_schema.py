@@ -67,6 +67,54 @@ class TestGraphQLQueries:
         result = client.execute(query)
         assert len(result['data']['projects']) == 2
 
+    def test_projects_query_nonexistent_organization(self):
+        """Test that querying projects for non-existent org raises error."""
+        client = Client(schema)
+        query = '''
+            query {
+                projects(organizationSlug: "nonexistent-org") {
+                    name
+                }
+            }
+        '''
+        result = client.execute(query)
+        assert result.get('errors') is not None
+        assert "Organization with slug 'nonexistent-org' not found" in str(result['errors'][0])
+
+    def test_projects_query_empty_organization(self):
+        """Test that org with no projects returns empty list (not error)."""
+        Organization.objects.create(
+            name="Empty Org",
+            slug="empty-org",
+            contact_email="empty@example.com"
+        )
+
+        client = Client(schema)
+        query = '''
+            query {
+                projects(organizationSlug: "empty-org") {
+                    name
+                }
+            }
+        '''
+        result = client.execute(query)
+        assert result.get('errors') is None
+        assert len(result['data']['projects']) == 0
+
+    def test_project_query_nonexistent(self):
+        """Test that querying non-existent project raises error."""
+        client = Client(schema)
+        query = '''
+            query {
+                project(id: "99999") {
+                    name
+                }
+            }
+        '''
+        result = client.execute(query)
+        assert result.get('errors') is not None
+        assert "Project with ID '99999' not found" in str(result['errors'][0])
+
 
 @pytest.mark.django_db
 class TestGraphQLMutations:

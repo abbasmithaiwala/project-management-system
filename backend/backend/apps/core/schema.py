@@ -121,8 +121,16 @@ class Query(graphene.ObjectType):
         """
         Get projects for an organization.
         Implements multi-tenancy by filtering on organization.
+        Raises Exception if organization doesn't exist.
         """
-        queryset = Project.objects.filter(organization__slug=organization_slug)
+        # Validate organization exists
+        try:
+            organization = Organization.objects.get(slug=organization_slug)
+        except Organization.DoesNotExist:
+            raise Exception(f"Organization with slug '{organization_slug}' not found")
+
+        # Filter projects by organization
+        queryset = Project.objects.filter(organization=organization)
         if status:
             queryset = queryset.filter(status=status)
         return queryset.select_related('organization').prefetch_related('tasks')
@@ -132,12 +140,18 @@ class Query(graphene.ObjectType):
         try:
             return Project.objects.select_related('organization').prefetch_related('tasks').get(pk=id)
         except Project.DoesNotExist:
-            return None
+            raise Exception(f"Project with ID '{id}' not found")
 
     # Task resolvers
     def resolve_tasks(self, info, project_id, status=None):
         """Get tasks for a project."""
-        queryset = Task.objects.filter(project_id=project_id)
+        # Validate project exists
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            raise Exception(f"Project with ID '{project_id}' not found")
+
+        queryset = Task.objects.filter(project=project)
         if status:
             queryset = queryset.filter(status=status)
         return queryset.select_related('project').prefetch_related('comments')

@@ -3,6 +3,8 @@ import { useQuery } from '@apollo/client';
 import { GET_PROJECT } from '../graphql/queries';
 import TaskBoard from '../components/TaskBoard';
 import Button from '../components/common/Button';
+import NotFound from './NotFound';
+import { isNotFoundError } from '../utils/errorUtils';
 
 const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -23,6 +25,18 @@ const ProjectDetail = () => {
     );
   }
 
+  // Handle project not found error
+  if (error && isNotFoundError(error)) {
+    return (
+      <NotFound
+        title="Project Not Found"
+        message="The project you are looking for does not exist. It may have been deleted or you may not have access to it."
+        backPath="/"
+      />
+    );
+  }
+
+  // Handle other errors
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -38,16 +52,14 @@ const ProjectDetail = () => {
 
   const project = data?.project;
 
+  // Defensive check
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="card">
-          <p className="text-gray-800">Project not found</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
-            Go Back
-          </Button>
-        </div>
-      </div>
+      <NotFound
+        title="Project Not Found"
+        message="The project you are looking for does not exist."
+        backPath="/"
+      />
     );
   }
 
