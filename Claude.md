@@ -481,7 +481,7 @@ export default client;
 ```bash
 # 1. Clone repository
 git clone <repository-url>
-cd voice-ai-wrapper
+cd project-management-system
 
 # 2. Copy environment variables
 cp .env.example .env

@@ -56,7 +56,7 @@ Choose one of the following setups:
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd voice-ai-wrapper
+   cd project-management-system
    ```
 
 2. **Set up environment variables**
@@ -70,14 +70,18 @@ Choose one of the following setups:
    docker-compose up --build
    ```
 
-4. **Run initial migrations** (in a new terminal)
+4. **Run initial migrations and seed data** (in a new terminal)
    ```bash
-   docker-compose exec backend python manage.py migrate
+   # Run migrations
+   ./db-manage.sh migrate
+
+   # Optional: Seed with sample data
+   ./db-manage.sh seed
    ```
 
 5. **Create a superuser** (optional, for Django admin)
    ```bash
-   docker-compose exec backend python manage.py createsuperuser
+   ./db-manage.sh superuser
    ```
 
 6. **Access the application**
@@ -172,6 +176,47 @@ Frontend will be available at http://localhost:5173
 ```
 
 ## Common Commands
+
+### Database Management Script (Recommended)
+
+A convenient script `db-manage.sh` is provided for common database operations:
+
+```bash
+# Reset database completely (removes all data)
+./db-manage.sh reset
+
+# Run database migrations
+./db-manage.sh migrate
+
+# Create new migrations
+./db-manage.sh makemigrations
+
+# Seed database with sample data (organizations, projects, tasks)
+./db-manage.sh seed
+
+# View database statistics
+./db-manage.sh status
+
+# Create Django superuser
+./db-manage.sh superuser
+
+# Open Django Python shell
+./db-manage.sh shell
+
+# Open PostgreSQL database shell
+./db-manage.sh dbshell
+
+# Show all available commands
+./db-manage.sh
+```
+
+The `seed` command populates your database with:
+- 2 sample organizations (Acme Corporation, Tech Innovators)
+- 3 projects across the organizations
+- 5 tasks with different statuses
+- 3 comments on tasks
+
+This is useful for testing and development!
 
 ### Docker Commands
 

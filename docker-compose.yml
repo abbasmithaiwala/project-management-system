@@ -2,9 +2,9 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: voice_ai_wrapper_db
+    container_name: project_management_system_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-voice_ai_wrapper}
+      POSTGRES_DB: ${POSTGRES_DB:-project_management_system}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
@@ -22,14 +22,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: voice_ai_wrapper_backend
+    container_name: project_management_system_backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-voice_ai_wrapper}
+      - POSTGRES_DB=${POSTGRES_DB:-project_management_system}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - POSTGRES_HOST=postgres
@@ -49,7 +49,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: voice_ai_wrapper_frontend
+    container_name: project_management_system_frontend
     command: npm run dev
     volumes:
       - ./frontend:/app
@@ -58,7 +58,7 @@ services:
       - "5173:5173"
     environment:
       - VITE_GRAPHQL_URL=${VITE_GRAPHQL_URL:-http://localhost:8000/graphql/}
-      - VITE_APP_TITLE=${VITE_APP_TITLE:-Voice AI Wrapper}
+      - VITE_APP_TITLE=${VITE_APP_TITLE:-Project Management System}
     depends_on:
       - backend
     stdin_open: true
