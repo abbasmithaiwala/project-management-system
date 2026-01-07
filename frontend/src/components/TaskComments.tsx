@@ -43,17 +43,17 @@ const TaskComments = ({ taskId }: TaskCommentsProps) => {
       {loading && <p className="text-gray-600">Loading comments...</p>}
 
       {!loading && (
-        <div className="space-y-4 mb-6">
+        <div className="space-y-3 sm:space-y-4 mb-6">
           {data?.taskComments?.length === 0 ? (
             <p className="text-gray-500 text-sm">No comments yet</p>
           ) : (
             data?.taskComments?.map((comment: any) => (
-              <div key={comment.id} className="bg-gray-50 rounded-lg p-4">
-                <p className="text-gray-900">{comment.content}</p>
-                <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                  <span>{comment.authorEmail}</span>
+              <div key={comment.id} className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <p className="text-sm sm:text-base text-gray-900 break-words">{comment.content}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                  <span className="break-all">{comment.authorEmail}</span>
                   <span>•</span>
-                  <span>{new Date(comment.createdAt).toLocaleString()}</span>
+                  <span className="whitespace-nowrap">{new Date(comment.createdAt).toLocaleString()}</span>
                 </div>
               </div>
             ))
@@ -68,7 +68,7 @@ const TaskComments = ({ taskId }: TaskCommentsProps) => {
             required
             value={newComment.content}
             onChange={(e) => setNewComment({ ...newComment, content: e.target.value })}
-            className="input"
+            className="input text-sm sm:text-base"
             rows={3}
             placeholder="Write your comment..."
           />
@@ -80,11 +80,11 @@ const TaskComments = ({ taskId }: TaskCommentsProps) => {
             required
             value={newComment.authorEmail}
             onChange={(e) => setNewComment({ ...newComment, authorEmail: e.target.value })}
-            className="input"
+            className="input text-sm sm:text-base"
             placeholder="your@email.com"
           />
         </div>
-        <Button type="submit" disabled={creating} className="btn-primary">
+        <Button type="submit" disabled={creating} className="btn-primary w-full sm:w-auto">
           {creating ? 'Posting...' : 'Post Comment'}
         </Button>
       </form>

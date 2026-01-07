@@ -25,10 +25,10 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
                 Project Management
               </h1>
               <p className="mt-1 text-sm text-gray-600">
@@ -37,7 +37,7 @@ const Dashboard = () => {
             </div>
             <button
               onClick={() => setShowCreateForm(!showCreateForm)}
-              className="btn btn-primary"
+              className="btn btn-primary whitespace-nowrap w-full sm:w-auto"
             >
               {showCreateForm ? 'Cancel' : 'New Project'}
             </button>
@@ -65,43 +65,43 @@ const Dashboard = () => {
 
         {/* Filters */}
         <div className="mb-6">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setFilterStatus('')}
-              className={`px-4 py-2 rounded-md ${
+              className={`px-3 sm:px-4 py-2 rounded-md text-sm sm:text-base whitespace-nowrap ${
                 filterStatus === ''
                   ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               All
             </button>
             <button
               onClick={() => setFilterStatus('ACTIVE')}
-              className={`px-4 py-2 rounded-md ${
+              className={`px-3 sm:px-4 py-2 rounded-md text-sm sm:text-base whitespace-nowrap ${
                 filterStatus === 'ACTIVE'
                   ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               Active
             </button>
             <button
               onClick={() => setFilterStatus('COMPLETED')}
-              className={`px-4 py-2 rounded-md ${
+              className={`px-3 sm:px-4 py-2 rounded-md text-sm sm:text-base whitespace-nowrap ${
                 filterStatus === 'COMPLETED'
                   ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               Completed
             </button>
             <button
               onClick={() => setFilterStatus('ON_HOLD')}
-              className={`px-4 py-2 rounded-md ${
+              className={`px-3 sm:px-4 py-2 rounded-md text-sm sm:text-base whitespace-nowrap ${
                 filterStatus === 'ON_HOLD'
                   ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               On Hold

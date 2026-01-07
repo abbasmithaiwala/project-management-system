@@ -102,11 +102,11 @@ const ProjectForm = ({ organizationSlug, onSuccess, onCancel }: ProjectFormProps
         </div>
       )}
 
-      <div className="flex gap-3 pt-4">
-        <Button type="submit" disabled={loading} className="btn-primary">
+      <div className="flex flex-col sm:flex-row gap-3 pt-4">
+        <Button type="submit" disabled={loading} className="btn-primary w-full sm:w-auto">
           {loading ? 'Creating...' : 'Create Project'}
         </Button>
-        <Button type="button" onClick={onCancel} className="btn-secondary">
+        <Button type="button" onClick={onCancel} className="btn-secondary w-full sm:w-auto">
           Cancel
         </Button>
       </div>

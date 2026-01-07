@@ -62,9 +62,9 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Tasks</h2>
-        <Button onClick={() => setShowCreateForm(!showCreateForm)} className="btn-primary">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Tasks</h2>
+        <Button onClick={() => setShowCreateForm(!showCreateForm)} className="btn-primary w-full sm:w-auto">
           {showCreateForm ? 'Cancel' : 'Add Task'}
         </Button>
       </div>
@@ -104,34 +104,36 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
                 placeholder="assignee@example.com"
               />
             </div>
-            <Button type="submit" disabled={creating} className="btn-primary">
+            <Button type="submit" disabled={creating} className="btn-primary w-full sm:w-auto">
               {creating ? 'Creating...' : 'Create Task'}
             </Button>
           </form>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {(['TODO', 'IN_PROGRESS', 'DONE'] as TaskStatus[]).map((status) => (
-          <div key={status} className="bg-gray-100 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 mb-4">
+          <div key={status} className="bg-gray-100 rounded-lg p-3 md:p-4">
+            <h3 className="font-semibold text-gray-900 mb-3 md:mb-4 text-sm md:text-base">
               {status.replace('_', ' ')} ({tasksByStatus[status].length})
             </h3>
             <div className="space-y-3">
               {tasksByStatus[status].map((task) => (
                 <div
                   key={task.id}
-                  className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-white rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => setSelectedTask(task)}
                 >
-                  <h4 className="font-medium text-gray-900">{task.title}</h4>
+                  <h4 className="font-medium text-gray-900 text-sm md:text-base break-words">{task.title}</h4>
                   {task.description && (
-                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">{task.description}</p>
+                    <p className="text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">{task.description}</p>
                   )}
                   {task.assigneeEmail && (
-                    <p className="text-xs text-gray-500 mt-2">Assigned to: {task.assigneeEmail}</p>
+                    <p className="text-xs text-gray-500 mt-2 truncate" title={task.assigneeEmail}>
+                      Assigned to: {task.assigneeEmail}
+                    </p>
                   )}
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {status !== 'TODO' && (
                       <button
                         onClick={(e) => {
@@ -141,9 +143,10 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
                             status === 'IN_PROGRESS' ? 'TODO' : 'IN_PROGRESS'
                           );
                         }}
-                        className="text-xs px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        className="text-xs px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 whitespace-nowrap"
                       >
-                        ← Move Back
+                        <span className="hidden sm:inline">← Move Back</span>
+                        <span className="sm:hidden">← Back</span>
                       </button>
                     )}
                     {status !== 'DONE' && (
@@ -155,9 +158,10 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
                             status === 'TODO' ? 'IN_PROGRESS' : 'DONE'
                           );
                         }}
-                        className="text-xs px-2 py-1 bg-primary-600 text-white rounded hover:bg-primary-700"
+                        className="text-xs px-2 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 whitespace-nowrap"
                       >
-                        Move Forward →
+                        <span className="hidden sm:inline">Move Forward →</span>
+                        <span className="sm:hidden">Next →</span>
                       </button>
                     )}
                   </div>
@@ -171,24 +175,26 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
       {/* Task Detail Modal */}
       {selectedTask && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto"
           onClick={() => setSelectedTask(null)}
         >
           <div
-            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-900">{selectedTask.title}</h2>
+            <div className="p-4 sm:p-6">
+              <div className="flex items-start justify-between mb-4 gap-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 break-words flex-1">{selectedTask.title}</h2>
                 <button
                   onClick={() => setSelectedTask(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 flex-shrink-0 text-2xl leading-none"
                 >
                   ✕
                 </button>
               </div>
-              <p className="text-gray-600 mb-4">{selectedTask.description}</p>
+              {selectedTask.description && (
+                <p className="text-sm sm:text-base text-gray-600 mb-4 break-words">{selectedTask.description}</p>
+              )}
               <div className="space-y-2 mb-6">
                 <p className="text-sm">
                   <span className="font-medium">Status:</span>{' '}
@@ -197,7 +203,7 @@ const TaskBoard = ({ projectId, tasks, onRefetch }: TaskBoardProps) => {
                   </span>
                 </p>
                 {selectedTask.assigneeEmail && (
-                  <p className="text-sm">
+                  <p className="text-sm break-words">
                     <span className="font-medium">Assignee:</span> {selectedTask.assigneeEmail}
                   </p>
                 )}
